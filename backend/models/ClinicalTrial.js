@@ -7,21 +7,27 @@ const officialSchema = new mongoose.Schema({
 
 const clinicalTrialSchema = new mongoose.Schema(
   {
-    facility: String,
-    city: String,
-    state: String,
-    country: String,
-    minimumAge: Number,
-    maximumAge: Number,
-    sex: { type: String, enum: ["ALL", "MALE", "FEMALE"], default: "ALL" },
+    facility: { type: String, required: true },
+    city: { type: String },
+    state: { type: String },
+    zip: { type: String }, // ✅ Added ZIP field
+    country: { type: String, required: true },
+    minimumAge: { type: Number },
+    maximumAge: { type: Number },
+    sex: {
+      type: String,
+      enum: ["ALL", "MALE", "FEMALE"],
+      default: "ALL",
+    },
     overallOfficials: [officialSchema],
   },
   { timestamps: true }
 );
 
-// Useful indexes for fast aggregation
+// ✅ Useful indexes for faster analytics & queries
 clinicalTrialSchema.index({ country: 1 });
 clinicalTrialSchema.index({ city: 1 });
+clinicalTrialSchema.index({ zip: 1 }); // ✅ Added ZIP index for location-based queries
 
 export const ClinicalTrial = mongoose.model(
   "ClinicalTrial",

@@ -46,3 +46,50 @@ export const getTrialsPerCity = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+// Get paginated and searchable officials
+export const getOfficialsPaginated = async (req, res) => {
+  try {
+    let { page = 1, limit = 10, search = "" } = req.query;
+    page = parseInt(page);
+    limit = parseInt(limit);
+
+    // Build a case-insensitive regex for search
+    const searchRegex = new RegExp(search, "i");
+
+    // Aggregate all officials across all trials
+    const allOfficials = await ClinicalTrial.aggregate([
+      { $unwind: "$overallOfficials" },
+      {
+        $project: {
+          _id: 0,
+          name: "$overallOfficials.name",
+          affiliation: "$overallOfficials.affiliation",
+        },
+      },
+      {
+        $match: {
+          $or: [
+            { name: { $regex: searchRegex } },
+            { affiliation: { $regex: searchRegex } },
+          ],
+        },
+      },
+    ]);
+
+    const total = allOfficials.length;
+    const startIndex = (page - 1) * limit;
+    const endIndex = startIndex + limit;
+    const paginated = allOfficials.slice(startIndex, endIndex);
+
+    res.json({
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit),
+      data: paginated,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

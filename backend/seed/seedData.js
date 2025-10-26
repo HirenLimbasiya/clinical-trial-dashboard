@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import fs from "fs";
 import { ClinicalTrial } from "../models/ClinicalTrial.js";
 import { connectDB } from "../config/db.js";
-import fs from "fs";
 
 dotenv.config();
 
@@ -10,10 +10,12 @@ const seedData = async () => {
   try {
     await connectDB();
 
+    // Load raw JSON data
     const rawData = JSON.parse(
       fs.readFileSync("./data/clinicalTrialsRaw.json", "utf-8")
     );
 
+    // Flatten structure into insertable records
     const flattened = rawData.flatMap((trial) => {
       const eligibility = trial.protocolSection?.eligibilityModule || {};
       const contacts = trial.protocolSection?.contactsLocationsModule || {};
@@ -24,10 +26,12 @@ const seedData = async () => {
       const officials = contacts.overallOfficials || [];
       const locations = contacts.locations || [];
 
+      // Map locations into MongoDB-ready objects
       return locations.map((loc) => ({
         facility: loc.facility || "Unknown Facility",
         city: loc.city || "Unknown City",
         state: loc.state || null,
+        zip: loc.zip || null, // ✅ added ZIP extraction
         country: loc.country || "Unknown Country",
         minimumAge: minAge,
         maximumAge: maxAge,
@@ -39,6 +43,7 @@ const seedData = async () => {
       }));
     });
 
+    // Reset and insert new data
     await ClinicalTrial.deleteMany();
     await ClinicalTrial.insertMany(flattened);
 
