@@ -1,27 +1,47 @@
-import express from "express";
-import dotenv from "dotenv";
-import cors from "cors";
-import { connectDB } from "./config/db.js";
-import analyticsRoutes from "./routes/analyticsRoutes.js";
+const app = require("./src/app");
+const connectDB = require("./src/config/database");
+const { PORT, NODE_ENV } = require("./src/config/env");
 
-dotenv.config();
-connectDB();
+// Handle uncaught exceptions
+process.on("uncaughtException", (err) => {
+  console.error("UNCAUGHT EXCEPTION! 💥 Shutting down...");
+  console.error(err.name, err.message);
+  process.exit(1);
+});
 
-const app = express();
+// Connect to MongoDB and start server
+const startServer = async () => {
+  try {
+    // Connect to database
+    await connectDB();
 
-// ✅ Enable CORS globally
-app.use(cors()); // simple and works for all routes
+    // Start server
+    const server = app.listen(PORT, () => {
+      console.log(`🚀 Server running in ${NODE_ENV} mode on port ${PORT}`);
+      console.log(`📊 API available at http://localhost:${PORT}/api/analytics`);
+    });
 
-// Parse JSON
-app.use(express.json());
+    // Handle unhandled promise rejections
+    process.on("unhandledRejection", (err) => {
+      console.error("UNHANDLED REJECTION! 💥 Shutting down...");
+      console.error(err.name, err.message);
+      server.close(() => {
+        process.exit(1);
+      });
+    });
 
-// Base route
-app.get("/test", (req, res) =>
-  res.send("Clinical Trial Analytics API is running...")
-);
+    // Graceful shutdown
+    process.on("SIGTERM", () => {
+      console.log("👋 SIGTERM received. Shutting down gracefully...");
+      server.close(() => {
+        console.log("💤 Process terminated!");
+      });
+    });
+  } catch (error) {
+    console.error("Failed to start server:", error);
+    process.exit(1);
+  }
+};
 
-// Analytics routes
-app.use("/api/analytics", analyticsRoutes);
-
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+// Start the server
+startServer();
