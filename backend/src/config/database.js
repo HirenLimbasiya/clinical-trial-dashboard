@@ -1,15 +1,6 @@
-/**
- * MongoDB Connection Configuration
- * Establishes connection to MongoDB with optimized settings
- */
-
 const mongoose = require("mongoose");
 const { MONGODB_URI, MONGODB_POOL_SIZE, NODE_ENV } = require("./env");
 
-/**
- * Connect to MongoDB with connection pooling and optimization
- * @returns {Promise<void>}
- */
 const connectDB = async () => {
   try {
     const options = {
@@ -33,23 +24,8 @@ const connectDB = async () => {
     console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
     console.log(`📂 Database: ${conn.connection.name}`);
 
-    // Log connection pool stats in development
-    if (NODE_ENV === "development") {
-      mongoose.connection.on("connected", () => {
-        console.log("🔗 Mongoose connected to MongoDB");
-      });
-
-      mongoose.connection.on("error", (err) => {
-        console.error("❌ Mongoose connection error:", err);
-      });
-
-      mongoose.connection.on("disconnected", () => {
-        console.log("🔌 Mongoose disconnected from MongoDB");
-      });
-    }
   } catch (error) {
     console.error("❌ MongoDB Connection Error:", error.message);
-    // Exit process with failure
     process.exit(1);
   }
 };

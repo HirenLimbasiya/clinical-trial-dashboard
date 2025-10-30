@@ -1,21 +1,9 @@
-/**
- * Analytics Service
- * Business logic for data aggregation and analytics processing
- * All MongoDB aggregation queries are optimized with proper indexing
- */
-
 const ClinicalTrial = require("../models/ClinicalTrial");
 const { AGE_RANGES } = require("../config/constants");
 
 class AnalyticsService {
-  /**
-   * Get distribution of clinical trial facilities by country
-   * Uses MongoDB aggregation with $unwind and $group for efficiency
-   * @returns {Promise<Array>} Array of countries with facility counts
-   */
   async getLocationDistribution() {
     const pipeline = [
-      // Unwind locations array to create separate documents for each location
       { $unwind: "$locations" },
 
       // Group by country and count facilities
@@ -29,7 +17,6 @@ class AnalyticsService {
       // Sort by count in descending order
       { $sort: { count: -1 } },
 
-      // Project to rename _id to country
       {
         $project: {
           _id: 0,
@@ -42,16 +29,9 @@ class AnalyticsService {
     return await ClinicalTrial.aggregate(pipeline);
   }
 
-  /**
-   * Get participant demographics (sex and age distribution)
-   * Optimized with compound index on sex, minimumAge, maximumAge
-   * @returns {Promise<Object>} Demographics data including sex and age distributions
-   */
   async getDemographics() {
-    // Get sex distribution
     const sexDistribution = await this.getSexDistribution();
 
-    // Get age distribution
     const ageDistribution = await this.getAgeDistribution();
 
     return {
@@ -61,10 +41,6 @@ class AnalyticsService {
     };
   }
 
-  /**
-   * Get sex distribution across all trials
-   * @returns {Promise<Array>} Array of sex categories with counts
-   */
   async getSexDistribution() {
     const pipeline = [
       {
@@ -97,14 +73,9 @@ class AnalyticsService {
     return await ClinicalTrial.aggregate(pipeline);
   }
 
-  /**
-   * Get age distribution grouped by predefined age ranges
-   * @returns {Promise<Array>} Array of age ranges with counts
-   */
   async getAgeDistribution() {
     const ageDistribution = [];
 
-    // Query each age range
     for (const range of AGE_RANGES) {
       const count = await ClinicalTrial.countDocuments({
         minimumAge: { $lte: range.max },
@@ -122,19 +93,10 @@ class AnalyticsService {
     return ageDistribution;
   }
 
-  /**
-   * Get number of trials per city
-   * Returns top N cities with most trials (default: 10)
-   * Optimized with index on locations.city
-   * @param {number} limit - Number of top cities to return
-   * @returns {Promise<Array>} Array of cities with trial counts
-   */
   async getTrialsPerCity(limit = 10) {
     const pipeline = [
-      // Unwind locations array
       { $unwind: "$locations" },
 
-      // Group by city and country (city names may repeat across countries)
       {
         $group: {
           _id: {
@@ -146,7 +108,6 @@ class AnalyticsService {
         },
       },
 
-      // Add facility count
       {
         $project: {
           _id: 0,
@@ -160,20 +121,12 @@ class AnalyticsService {
       // Sort by trial count descending
       { $sort: { trialCount: -1 } },
 
-      // Limit to top N cities
       { $limit: limit },
     ];
 
     return await ClinicalTrial.aggregate(pipeline);
   }
 
-  /**
-   * Get overall officials with their affiliations
-   * Supports pagination for large datasets
-   * @param {number} page - Page number (default: 1)
-   * @param {number} limit - Items per page (default: 10)
-   * @returns {Promise<Object>} Paginated officials data
-   */
   async getOfficials(page = 1, limit = 10) {
     const skip = (page - 1) * limit;
 
@@ -240,11 +193,6 @@ class AnalyticsService {
     };
   }
 
-  /**
-   * Get trials filtered by start year (Bonus feature)
-   * @param {number} year - Minimum start year
-   * @returns {Promise<Object>} Analytics data for filtered trials
-   */
   async getTrialsByYear(year) {
     const query = year ? { startYear: { $gte: year } } : {};
 
@@ -260,10 +208,6 @@ class AnalyticsService {
     };
   }
 
-  /**
-   * Get summary statistics for dashboard
-   * @returns {Promise<Object>} Summary statistics
-   */
   async getSummaryStats() {
     const [totalTrials, totalCountries, totalCities, totalFacilities] =
       await Promise.all([
@@ -285,13 +229,6 @@ class AnalyticsService {
     };
   }
 
-  /**
-   * Search trials by facility name (Bonus feature)
-   * Uses text index for efficient searching
-   * @param {string} searchTerm - Search term for facility name
-   * @param {number} limit - Maximum results to return
-   * @returns {Promise<Array>} Matching trials
-   */
   async searchByFacility(searchTerm, limit = 20) {
     if (!searchTerm || searchTerm.trim().length === 0) {
       return [];

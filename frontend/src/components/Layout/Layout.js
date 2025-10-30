@@ -1,8 +1,3 @@
-/**
- * Layout Component
- * Professional sidebar navigation with clean design
- */
-
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { BarChart3, Search, Users, Activity } from "lucide-react";
@@ -60,18 +55,6 @@ const Layout = ({ children }) => {
             );
           })}
         </nav>
-
-        <div className="sidebar-footer">
-          <div className="user-info">
-            <div className="user-avatar">
-              <Users size={16} />
-            </div>
-            <div className="user-details">
-              <p className="user-name">Admin User</p>
-              <p className="user-role">Analytics Dashboard</p>
-            </div>
-          </div>
-        </div>
       </aside>
 
       {/* Main Content */}

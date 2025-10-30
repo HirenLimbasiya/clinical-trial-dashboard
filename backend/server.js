@@ -15,10 +15,8 @@ const startServer = async () => {
     // Connect to database
     await connectDB();
 
-    // Start server
     const server = app.listen(PORT, () => {
       console.log(`🚀 Server running in ${NODE_ENV} mode on port ${PORT}`);
-      console.log(`📊 API available at http://localhost:${PORT}/api/analytics`);
     });
 
     // Handle unhandled promise rejections
@@ -43,5 +41,4 @@ const startServer = async () => {
   }
 };
 
-// Start the server
 startServer();

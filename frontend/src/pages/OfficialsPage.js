@@ -1,17 +1,6 @@
-/**
- * Officials Page
- * Professional officials listing with pagination
- */
-
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  User,
-  Building,
-  Briefcase,
-  ChevronLeft,
-  ChevronRight,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import {
   fetchOfficials,
   selectOfficials,
@@ -31,7 +20,7 @@ const OfficialsPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
-    dispatch(fetchOfficials({ page: currentPage, limit: 12 }));
+    dispatch(fetchOfficials({ page: currentPage, limit: 15 }));
   }, [dispatch, currentPage]);
 
   const handlePageChange = (page) => {
@@ -51,7 +40,7 @@ const OfficialsPage = () => {
         <ErrorMessage
           message={error}
           onRetry={() =>
-            dispatch(fetchOfficials({ page: currentPage, limit: 12 }))
+            dispatch(fetchOfficials({ page: currentPage, limit: 15 }))
           }
         />
       </div>
@@ -71,87 +60,82 @@ const OfficialsPage = () => {
         {pagination && (
           <div className="header-stats">
             <div className="stat-badge">
-              <span className="stat-label">Total</span>
+              <span className="stat-label">Total Officials</span>
               <span className="stat-value">{pagination.totalItems}</span>
             </div>
           </div>
         )}
       </div>
 
-      {/* Officials Grid */}
+      {/* Officials Table */}
       {loading && currentPage === 1 ? (
         <div className="loading-container">
           <Loader message="Loading officials..." />
         </div>
       ) : (
         <>
-          <div className="officials-grid">
-            {officials.map((official, index) => (
-              <div key={index} className="official-card">
-                <div className="card-header">
-                  <div className="official-avatar">
-                    <User size={20} />
-                  </div>
-                  <div className="official-info">
-                    <h3 className="official-name">{official.name}</h3>
-                    <span className="trial-count">
-                      {official.trialCount}{" "}
-                      {official.trialCount === 1 ? "Trial" : "Trials"}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="card-body">
-                  {official.affiliations &&
-                    official.affiliations.length > 0 && (
-                      <div className="info-section">
-                        <div className="section-header">
-                          <Building size={16} />
-                          <span>Affiliations</span>
-                        </div>
-                        <div className="tags-list">
+          <div className="table-container">
+            <table className="officials-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Affiliations</th>
+                  <th>Roles</th>
+                  <th className="text-center">Trials</th>
+                </tr>
+              </thead>
+              <tbody>
+                {officials.map((official, index) => (
+                  <tr key={index}>
+                    <td>
+                      <div className="official-name">{official.name}</div>
+                    </td>
+                    <td>
+                      {official.affiliations &&
+                      official.affiliations.length > 0 ? (
+                        <div className="tags-cell">
                           {official.affiliations.map((aff, i) => (
                             <span key={i} className="tag tag-affiliation">
                               {aff}
                             </span>
                           ))}
                         </div>
-                      </div>
-                    )}
-
-                  {official.roles && official.roles.length > 0 && (
-                    <div className="info-section">
-                      <div className="section-header">
-                        <Briefcase size={16} />
-                        <span>Roles</span>
-                      </div>
-                      <div className="tags-list">
-                        {official.roles.map((role, i) => (
-                          <span key={i} className="tag tag-role">
-                            {role}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {!official.affiliations?.length &&
-                    !official.roles?.length && (
-                      <p className="no-info">
-                        No additional information available
-                      </p>
-                    )}
-                </div>
-              </div>
-            ))}
+                      ) : (
+                        <span className="text-muted">—</span>
+                      )}
+                    </td>
+                    <td>
+                      {official.roles && official.roles.length > 0 ? (
+                        <div className="tags-cell">
+                          {official.roles.map((role, i) => (
+                            <span key={i} className="tag tag-role">
+                              {role}
+                            </span>
+                          ))}
+                        </div>
+                      ) : (
+                        <span className="text-muted">—</span>
+                      )}
+                    </td>
+                    <td className="text-center">
+                      <span className="trial-count">{official.trialCount}</span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
 
           {/* Pagination */}
           {pagination && pagination.totalPages > 1 && (
             <div className="pagination">
               <div className="pagination-info">
-                Page {pagination.currentPage} of {pagination.totalPages} •
-                {pagination.totalItems} total officials
+                Showing {(currentPage - 1) * pagination.itemsPerPage + 1} -{" "}
+                {Math.min(
+                  currentPage * pagination.itemsPerPage,
+                  pagination.totalItems
+                )}{" "}
+                of {pagination.totalItems} officials
               </div>
 
               <div className="pagination-controls">

@@ -1,8 +1,3 @@
-/**
- * Header Component
- * Dashboard header with title and description
- */
-
 import React from "react";
 
 const Header = () => {

@@ -1,8 +1,3 @@
-/**
- * Stats Card Component
- * Professional statistics card with icon
- */
-
 import React from "react";
 
 const StatsCard = ({ title, value, icon: Icon, loading }) => {

@@ -1,8 +1,3 @@
-/**
- * Search Page
- * Professional search interface with clean design
- */
-
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Search, X, MapPin, Users, Calendar } from "lucide-react";

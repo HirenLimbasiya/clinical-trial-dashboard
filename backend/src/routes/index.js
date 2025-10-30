@@ -1,16 +1,9 @@
-/**
- * Main Router
- * Combines all route modules
- */
-
 const express = require("express");
 const router = express.Router();
 const analyticsRoutes = require("./analyticsRoutes");
 
-// Mount analytics routes
 router.use("/analytics", analyticsRoutes);
 
-// API info endpoint
 router.get("/", (req, res) => {
   res.json({
     success: true,

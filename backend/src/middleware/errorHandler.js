@@ -1,15 +1,6 @@
-/**
- * Global Error Handling Middleware
- * Catches and formats all errors in the application
- */
-
 const { NODE_ENV } = require("../config/env");
 const { HTTP_STATUS } = require("../config/constants");
 
-/**
- * Global error handler middleware
- * Formats errors consistently and hides sensitive information in production
- */
 const errorHandler = (err, req, res, next) => {
   // Log error for debugging
   console.error("Error:", {

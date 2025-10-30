@@ -1,8 +1,3 @@
-/**
- * Loader Component
- * Loading spinner with optional message
- */
-
 import React from "react";
 
 const Loader = ({ message = "Loading data..." }) => {

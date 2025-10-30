@@ -1,12 +1,6 @@
-/**
- * Officials Table Component
- * Displays overall officials with pagination
- */
-
 import React from "react";
 
 const OfficialsTable = ({ data, pagination, onPageChange, loading }) => {
-  // Handle empty data
   if (!data || data.length === 0) {
     return <div className="no-data">No officials data available</div>;
   }

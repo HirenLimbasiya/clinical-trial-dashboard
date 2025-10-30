@@ -1,8 +1,3 @@
-/**
- * Year Filter Component
- * Allows filtering trials by start year
- */
-
 import React, { useState } from "react";
 
 const YearFilter = ({ onFilter, loading, selectedYear }) => {

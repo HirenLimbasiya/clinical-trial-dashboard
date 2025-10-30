@@ -1,23 +1,13 @@
-/**
- * Analytics Controller
- * Handles HTTP requests and responses for analytics endpoints
- */
-
 const analyticsService = require("../services/analyticsService");
 const asyncHandler = require("../utils/asyncHandler");
 const ApiResponse = require("../utils/ApiResponse");
 const { HTTP_STATUS, CACHE_DURATION } = require("../config/constants");
 
-/**
- * @route   GET /api/analytics/locations
- * @desc    Get distribution of clinical trial facilities by country
- * @access  Public
- */
 exports.getLocationDistribution = asyncHandler(async (req, res) => {
   const data = await analyticsService.getLocationDistribution();
 
   // Set cache headers for better performance
-  res.set("Cache-Control", `public, max-age=${CACHE_DURATION.MEDIUM}`);
+  res.set("Cache-Control", `public, max-age=${CACHE_DURATION.SHORT}`);
 
   ApiResponse.success(
     res,
@@ -29,13 +19,12 @@ exports.getLocationDistribution = asyncHandler(async (req, res) => {
 /**
  * @route   GET /api/analytics/demographics
  * @desc    Get participant demographics (sex and age distribution)
- * @access  Public
  */
 exports.getDemographics = asyncHandler(async (req, res) => {
   const data = await analyticsService.getDemographics();
 
   // Set cache headers
-  res.set("Cache-Control", `public, max-age=${CACHE_DURATION.MEDIUM}`);
+  res.set("Cache-Control", `public, max-age=${CACHE_DURATION.SHORT}`);
 
   ApiResponse.success(res, data, "Demographics retrieved successfully");
 });
@@ -43,7 +32,6 @@ exports.getDemographics = asyncHandler(async (req, res) => {
 /**
  * @route   GET /api/analytics/trials-per-city
  * @desc    Get number of trials per city (top cities)
- * @access  Public
  * @query   limit - Number of top cities to return (default: 10)
  */
 exports.getTrialsPerCity = asyncHandler(async (req, res) => {
@@ -61,7 +49,7 @@ exports.getTrialsPerCity = asyncHandler(async (req, res) => {
   const data = await analyticsService.getTrialsPerCity(limit);
 
   // Set cache headers
-  res.set("Cache-Control", `public, max-age=${CACHE_DURATION.MEDIUM}`);
+  res.set("Cache-Control", `public, max-age=${CACHE_DURATION.SHORT}`);
 
   ApiResponse.success(res, data, "Trials per city retrieved successfully");
 });
@@ -69,7 +57,6 @@ exports.getTrialsPerCity = asyncHandler(async (req, res) => {
 /**
  * @route   GET /api/analytics/officials
  * @desc    Get overall officials with pagination
- * @access  Public
  * @query   page - Page number (default: 1)
  * @query   limit - Items per page (default: 10)
  */
@@ -77,7 +64,6 @@ exports.getOfficials = asyncHandler(async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
 
-  // Validate pagination params
   if (page < 1) {
     return ApiResponse.error(
       res,
@@ -97,7 +83,7 @@ exports.getOfficials = asyncHandler(async (req, res) => {
   const data = await analyticsService.getOfficials(page, limit);
 
   // Set cache headers
-  res.set("Cache-Control", `public, max-age=${CACHE_DURATION.LONG}`);
+  res.set("Cache-Control", `public, max-age=${CACHE_DURATION.SHORT}`);
 
   ApiResponse.success(res, data, "Officials retrieved successfully");
 });
@@ -105,7 +91,6 @@ exports.getOfficials = asyncHandler(async (req, res) => {
 /**
  * @route   GET /api/analytics/summary
  * @desc    Get summary statistics
- * @access  Public
  */
 exports.getSummaryStats = asyncHandler(async (req, res) => {
   const data = await analyticsService.getSummaryStats();
@@ -119,7 +104,6 @@ exports.getSummaryStats = asyncHandler(async (req, res) => {
 /**
  * @route   GET /api/analytics/trials-by-year
  * @desc    Get trials filtered by start year (Bonus feature)
- * @access  Public
  * @query   year - Minimum start year
  */
 exports.getTrialsByYear = asyncHandler(async (req, res) => {
@@ -148,7 +132,6 @@ exports.getTrialsByYear = asyncHandler(async (req, res) => {
 /**
  * @route   GET /api/analytics/search
  * @desc    Search trials by facility name (Bonus feature)
- * @access  Public
  * @query   q - Search query
  * @query   limit - Maximum results (default: 20)
  */

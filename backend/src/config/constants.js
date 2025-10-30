@@ -1,17 +1,10 @@
-/**
- * Application Constants
- * Defines constant values used throughout the application
- */
-
 module.exports = {
-  // Sex categories for demographics
   SEX_CATEGORIES: {
     MALE: "MALE",
     FEMALE: "FEMALE",
     ALL: "ALL",
   },
 
-  // Age ranges for demographics grouping
   AGE_RANGES: [
     { label: "18-30", min: 18, max: 30 },
     { label: "31-45", min: 31, max: 45 },
@@ -20,11 +13,9 @@ module.exports = {
     { label: "76+", min: 76, max: 150 },
   ],
 
-  // Default pagination limits
   DEFAULT_LIMIT: 10,
   MAX_LIMIT: 100,
 
-  // HTTP Status Codes
   HTTP_STATUS: {
     OK: 200,
     CREATED: 201,
@@ -35,7 +26,6 @@ module.exports = {
     INTERNAL_SERVER_ERROR: 500,
   },
 
-  // Cache durations (in seconds)
   CACHE_DURATION: {
     SHORT: 300, // 5 minutes
     MEDIUM: 1800, // 30 minutes

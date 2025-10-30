@@ -1,8 +1,3 @@
-/**
- * Trials Per City Chart Component
- * Bar chart displaying top cities with most clinical trials
- */
-
 import React from "react";
 import {
   BarChart,
@@ -16,18 +11,15 @@ import {
 } from "recharts";
 
 const TrialsPerCityChart = ({ data }) => {
-  // Handle empty data
   if (!data || data.length === 0) {
     return <div className="no-data">No city data available</div>;
   }
 
-  // Format data for better display - combine city and country
   const chartData = data.map((item) => ({
     ...item,
     cityCountry: `${item.city}, ${item.country}`,
   }));
 
-  // Custom tooltip to show more information
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;

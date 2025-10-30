@@ -1,8 +1,3 @@
-/**
- * Error Message Component
- * Displays error messages with optional retry button
- */
-
 import React from "react";
 
 const ErrorMessage = ({ message, onRetry }) => {

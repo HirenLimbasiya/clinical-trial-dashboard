@@ -1,7 +1,3 @@
-/**
- * Dashboard Styles - Professional & Minimalistic
- */
-
 .dashboard-page {
   padding: 32px;
   max-width: 1400px;
@@ -98,36 +94,23 @@
   100% { background-position: -200% 0; }
 }
 
-/* Filter Section */
-.filter-section {
-  margin-bottom: 32px;
-}
-
-.filter-results {
-  margin-top: 20px;
-  padding: 16px;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-}
-
-.filter-results-text {
-  font-size: 14px;
-  color: #475569;
-  margin: 0;
-  text-align: center;
-}
-
-.filter-results-text strong {
-  color: #3b82f6;
-  font-weight: 600;
-}
-
 /* Charts Grid */
 .charts-grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: 24px;
+}
+
+/* Demographics Side by Side */
+.demographics-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+
+/* Year Filter Section - Bottom */
+.year-filter-section {
+  margin-top: 24px;
 }
 
 /* Chart Container */

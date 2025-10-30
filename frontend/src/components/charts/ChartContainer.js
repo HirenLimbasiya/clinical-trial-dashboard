@@ -1,8 +1,3 @@
-/**
- * Chart Container Component
- * Reusable wrapper for all charts with loading and error states
- */
-
 import React from "react";
 import Loader from "../common/Loader";
 import ErrorMessage from "../common/ErrorMessage";

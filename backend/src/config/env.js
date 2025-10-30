@@ -19,9 +19,6 @@ module.exports = {
   MONGODB_URI: process.env.MONGODB_URI,
   MONGODB_POOL_SIZE: parseInt(process.env.MONGODB_POOL_SIZE, 10) || 10,
 
-  // API Configuration
-  API_VERSION: process.env.API_VERSION || "v1",
-
   // CORS Configuration
   CORS_ORIGIN: process.env.CORS_ORIGIN || "http://localhost:3000",
 

@@ -1,8 +1,3 @@
-/**
- * Facility Search Component
- * Search clinical trials by facility name
- */
-
 import React, { useState } from "react";
 
 const FacilitySearch = ({

@@ -1,8 +1,3 @@
-/**
- * Application Entry Point
- * Renders the React app with Redux Provider
- */
-
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { Provider } from "react-redux";

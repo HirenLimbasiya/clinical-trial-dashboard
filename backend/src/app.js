@@ -1,7 +1,6 @@
 const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
-const morgan = require("morgan");
 const compression = require("compression");
 const rateLimit = require("express-rate-limit");
 
@@ -9,12 +8,10 @@ const routes = require("./routes");
 const errorHandler = require("./middleware/errorHandler");
 const {
   CORS_ORIGIN,
-  NODE_ENV,
   RATE_LIMIT_WINDOW_MS,
   RATE_LIMIT_MAX_REQUESTS,
 } = require("./config/env");
 
-// Initialize Express app
 const app = express();
 
 // Security middleware - Helmet helps secure Express apps by setting various HTTP headers
@@ -37,13 +34,6 @@ app.use(compression());
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
-// Logging middleware - Log HTTP requests in development
-if (NODE_ENV === "development") {
-  app.use(morgan("dev"));
-} else {
-  app.use(morgan("combined"));
-}
-
 // Rate limiting - Prevent abuse by limiting repeated requests
 const limiter = rateLimit({
   windowMs: RATE_LIMIT_WINDOW_MS, // 15 minutes default
@@ -54,7 +44,6 @@ const limiter = rateLimit({
 });
 app.use("/api/", limiter);
 
-// Health check endpoint
 app.get("/health", (req, res) => {
   res.status(200).json({
     success: true,

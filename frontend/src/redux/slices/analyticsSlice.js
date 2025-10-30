@@ -1,14 +1,6 @@
-/**
- * Analytics Redux Slice
- * Manages state for all analytics data using Redux Toolkit
- */
-
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import analyticsApi from "../../api/analyticsApi";
 
-/**
- * Initial state structure
- */
 const initialState = {
   locations: {
     data: [],
@@ -50,9 +42,6 @@ const initialState = {
   },
 };
 
-/**
- * Async Thunks - Handle API calls with loading/error states automatically
- */
 
 // Fetch location distribution
 export const fetchLocationDistribution = createAsyncThunk(

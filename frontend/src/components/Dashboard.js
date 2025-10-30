@@ -1,8 +1,3 @@
-/**
- * Dashboard Component
- * Professional analytics dashboard with clean design
- */
-
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Activity, MapPin, Users as UsersIcon, Building2 } from "lucide-react";
@@ -19,7 +14,6 @@ import {
   selectTrialsByYear,
 } from "../redux/slices/analyticsSlice";
 
-// Import components
 import StatsCard from "./common/StatsCard";
 import ChartContainer from "./charts/ChartContainer";
 import LocationChart from "./charts/LocationChart";
@@ -27,20 +21,17 @@ import DemographicsChart from "./charts/DemographicsChart";
 import TrialsPerCityChart from "./charts/TrialsPerCityChart";
 import YearFilter from "./filters/YearFilter";
 
-// Import styles
 import "../styles/Dashboard.css";
 
 const Dashboard = () => {
   const dispatch = useDispatch();
 
-  // Select data from Redux store
   const locations = useSelector(selectLocations);
   const demographics = useSelector(selectDemographics);
   const trialsPerCity = useSelector(selectTrialsPerCity);
   const summary = useSelector(selectSummary);
   const trialsByYear = useSelector(selectTrialsByYear);
 
-  // Fetch all data on component mount
   useEffect(() => {
     dispatch(fetchLocationDistribution());
     dispatch(fetchDemographics());
@@ -100,10 +91,54 @@ const Dashboard = () => {
         />
       </div>
 
-      {/* Year Filter */}
-      <div className="filter-section">
+      {/* Charts Grid */}
+      <div className="charts-grid">
+        {/* Location Distribution */}
         <ChartContainer
-          title="Filter by Year"
+          title="Facilities by Country"
+          loading={locations.loading}
+          error={locations.error}
+          onRetry={handleRetryLocations}
+        >
+          <LocationChart data={locations.data} />
+        </ChartContainer>
+
+        {/* Demographics - Side by Side */}
+        <div className="demographics-grid">
+          <ChartContainer
+            title="Sex Distribution"
+            loading={demographics.loading}
+            error={demographics.error}
+            onRetry={handleRetryDemographics}
+          >
+            <DemographicsChart data={demographics.data} chartType="pie" />
+          </ChartContainer>
+
+          <ChartContainer
+            title="Age Distribution"
+            loading={demographics.loading}
+            error={demographics.error}
+            onRetry={handleRetryDemographics}
+          >
+            <DemographicsChart data={demographics.data} chartType="bar" />
+          </ChartContainer>
+        </div>
+
+        {/* Top Cities */}
+        <ChartContainer
+          title="Top Cities"
+          loading={trialsPerCity.loading}
+          error={trialsPerCity.error}
+          onRetry={handleRetryTrialsPerCity}
+        >
+          <TrialsPerCityChart data={trialsPerCity.data} />
+        </ChartContainer>
+      </div>
+
+      {/* Year Filter - Bottom Section */}
+      <div className="year-filter-section">
+        <ChartContainer
+          title="Filter Trials by Start Year"
           loading={trialsByYear.loading}
           error={trialsByYear.error}
         >
@@ -121,36 +156,6 @@ const Dashboard = () => {
               </p>
             </div>
           )}
-        </ChartContainer>
-      </div>
-
-      {/* Charts Grid */}
-      <div className="charts-grid">
-        <ChartContainer
-          title="Facilities by Country"
-          loading={locations.loading}
-          error={locations.error}
-          onRetry={handleRetryLocations}
-        >
-          <LocationChart data={locations.data} />
-        </ChartContainer>
-
-        <ChartContainer
-          title="Participant Demographics"
-          loading={demographics.loading}
-          error={demographics.error}
-          onRetry={handleRetryDemographics}
-        >
-          <DemographicsChart data={demographics.data} />
-        </ChartContainer>
-
-        <ChartContainer
-          title="Top Cities"
-          loading={trialsPerCity.loading}
-          error={trialsPerCity.error}
-          onRetry={handleRetryTrialsPerCity}
-        >
-          <TrialsPerCityChart data={trialsPerCity.data} />
         </ChartContainer>
       </div>
     </div>
