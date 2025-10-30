@@ -30,6 +30,24 @@ const initialState = {
     loading: false,
     error: null,
   },
+  officials: {
+    data: [],
+    pagination: null,
+    loading: false,
+    error: null,
+  },
+  trialsByYear: {
+    data: [],
+    loading: false,
+    error: null,
+    selectedYear: null,
+  },
+  search: {
+    data: [],
+    loading: false,
+    error: null,
+    query: "",
+  },
 };
 
 /**
@@ -88,6 +106,45 @@ export const fetchSummaryStats = createAsyncThunk(
   }
 );
 
+// Fetch officials with pagination
+export const fetchOfficials = createAsyncThunk(
+  "analytics/fetchOfficials",
+  async ({ page = 1, limit = 10 }, { rejectWithValue }) => {
+    try {
+      const response = await analyticsApi.getOfficials(page, limit);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+// Fetch trials by year
+export const fetchTrialsByYear = createAsyncThunk(
+  "analytics/fetchTrialsByYear",
+  async (year, { rejectWithValue }) => {
+    try {
+      const response = await analyticsApi.getTrialsByYear(year);
+      return { data: response.data, year };
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+// Search facilities
+export const searchFacilities = createAsyncThunk(
+  "analytics/searchFacilities",
+  async ({ query, limit = 20 }, { rejectWithValue }) => {
+    try {
+      const response = await analyticsApi.searchFacilities(query, limit);
+      return { data: response.data, query };
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 /**
  * Analytics Slice
  * Automatically generates actions and reducers
@@ -102,6 +159,14 @@ const analyticsSlice = createSlice({
       state.demographics.error = null;
       state.trialsPerCity.error = null;
       state.summary.error = null;
+      state.officials.error = null;
+      state.trialsByYear.error = null;
+      state.search.error = null;
+    },
+    clearSearch: (state) => {
+      state.search.data = [];
+      state.search.query = "";
+      state.search.error = null;
     },
   },
   extraReducers: (builder) => {
@@ -164,17 +229,68 @@ const analyticsSlice = createSlice({
         state.summary.loading = false;
         state.summary.error = action.payload;
       });
+
+    // Officials
+    builder
+      .addCase(fetchOfficials.pending, (state) => {
+        state.officials.loading = true;
+        state.officials.error = null;
+      })
+      .addCase(fetchOfficials.fulfilled, (state, action) => {
+        state.officials.loading = false;
+        state.officials.data = action.payload.data;
+        state.officials.pagination = action.payload.pagination;
+      })
+      .addCase(fetchOfficials.rejected, (state, action) => {
+        state.officials.loading = false;
+        state.officials.error = action.payload;
+      });
+
+    // Trials By Year
+    builder
+      .addCase(fetchTrialsByYear.pending, (state) => {
+        state.trialsByYear.loading = true;
+        state.trialsByYear.error = null;
+      })
+      .addCase(fetchTrialsByYear.fulfilled, (state, action) => {
+        state.trialsByYear.loading = false;
+        state.trialsByYear.data = action.payload.data;
+        state.trialsByYear.selectedYear = action.payload.year;
+      })
+      .addCase(fetchTrialsByYear.rejected, (state, action) => {
+        state.trialsByYear.loading = false;
+        state.trialsByYear.error = action.payload;
+      });
+
+    // Search Facilities
+    builder
+      .addCase(searchFacilities.pending, (state) => {
+        state.search.loading = true;
+        state.search.error = null;
+      })
+      .addCase(searchFacilities.fulfilled, (state, action) => {
+        state.search.loading = false;
+        state.search.data = action.payload.data;
+        state.search.query = action.payload.query;
+      })
+      .addCase(searchFacilities.rejected, (state, action) => {
+        state.search.loading = false;
+        state.search.error = action.payload;
+      });
   },
 });
 
 // Export actions
-export const { clearErrors } = analyticsSlice.actions;
+export const { clearErrors, clearSearch } = analyticsSlice.actions;
 
 // Export selectors for easy state access
 export const selectLocations = (state) => state.analytics.locations;
 export const selectDemographics = (state) => state.analytics.demographics;
 export const selectTrialsPerCity = (state) => state.analytics.trialsPerCity;
 export const selectSummary = (state) => state.analytics.summary;
+export const selectOfficials = (state) => state.analytics.officials;
+export const selectTrialsByYear = (state) => state.analytics.trialsByYear;
+export const selectSearch = (state) => state.analytics.search;
 
 // Export reducer
 export default analyticsSlice.reducer;

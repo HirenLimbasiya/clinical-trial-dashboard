@@ -95,6 +95,32 @@ const analyticsApi = {
     });
     return response.data;
   },
+
+  /**
+   * Get officials with pagination (Bonus feature)
+   * @param {number} page - Page number
+   * @param {number} limit - Items per page
+   * @returns {Promise} Paginated officials data
+   */
+  getOfficials: async (page = 1, limit = 10) => {
+    const response = await apiClient.get("/analytics/officials", {
+      params: { page, limit },
+    });
+    return response.data;
+  },
+
+  /**
+   * Search facilities by name (Bonus feature)
+   * @param {string} query - Search query
+   * @param {number} limit - Maximum results
+   * @returns {Promise} Search results
+   */
+  searchFacilities: async (query, limit = 20) => {
+    const response = await apiClient.get("/analytics/search", {
+      params: { q: query, limit },
+    });
+    return response.data;
+  },
 };
 
 export default analyticsApi;
