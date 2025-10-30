@@ -2,6 +2,7 @@
  * Data Import Script (Safe Version)
  * - Skips incomplete or malformed records
  * - Auto-parses age fields (e.g. "55 Years" → 55)
+ * - Randomizes startYear within the last 10 years
  * - Logs inserted vs skipped counts
  */
 
@@ -15,11 +16,22 @@ const { MONGODB_URI } = require("../src/config/env");
 // Path to JSON dataset
 const dataFilePath = path.join(__dirname, "clinicalTrialsData.json");
 
-// Helper to convert "55 Years" → 55
+// ---------------------------
+// Helpers
+// ---------------------------
+
+// Convert "55 Years" → 55
 const parseAge = (ageStr) => {
   if (!ageStr) return null;
   const match = ageStr.match(/\d+/);
   return match ? parseInt(match[0], 10) : null;
+};
+
+// Generate a random year within the last 10 years
+const getRandomYear = () => {
+  const currentYear = new Date().getFullYear();
+  const yearsAgo = Math.floor(Math.random() * 10); // 0–9 years ago
+  return currentYear - yearsAgo;
 };
 
 /**
@@ -83,7 +95,7 @@ const importData = async () => {
           maximumAge: maxAge,
           locations: mappedLocations,
           overallOfficials: mappedOfficials,
-          startYear: new Date().getFullYear(),
+          startYear: getRandomYear(), // ✅ Random year within last 10 years
         });
 
         inserted++;
@@ -92,6 +104,7 @@ const importData = async () => {
       }
     }
 
+    // Insert valid trials
     if (validTrials.length > 0) {
       await ClinicalTrial.insertMany(validTrials);
     }
